@@ -1,0 +1,67 @@
+{% extends 'chat/base.html' %}
+{% block main %}
+<div class="main-header">
+    <img src="{{ other_user.profile.avatar.url }}">
+    <div class="name">{{ other_user.username }}</div>
+</div>
+
+<div id="chat-log" class="chat-log">
+    {% for msg in messages %}
+        <div class="message-row {% if msg.username == request.user.username %}out{% endif %}">
+            <img src="{{ msg.avatar_url }}">
+            <div class="bubble">
+                <span class="sender">{{ msg.username }}</span>{{ msg.content }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="input-bar">
+    <input id="chat-message-input" type="text" placeholder="Xabar yozing...">
+    <button class="send-btn" id="chat-message-submit">
+        <svg viewBox="0 0 24 24" fill="#1a1a1a"><path d="M2 12.5l19-9-4 19-6-5-3 3-1-6-5-2z"/></svg>
+    </button>
+</div>
+
+<script>
+    const currentUsername = "{{ request.user.username }}";
+    const roomName = "{{ room_name }}";
+    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
+
+function appendMessage(username, message, avatarUrl, time) {
+    const chatLog = document.querySelector('#chat-log');
+    const outClass = username === currentUsername ? 'out' : '';
+    chatLog.insertAdjacentHTML('beforeend', `
+        <div class="message-row ${outClass}">
+            <img src="${avatarUrl}">
+            <div class="bubble">
+                <span class="sender">${username}</span>${message}
+                <span class="time">${time}</span>
+            </div>
+        </div>
+    `);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    appendMessage(data.username, data.message, data.avatar_url, data.time);
+};
+    chatSocket.onclose = function() { console.error('Chat socket uzildi'); };
+
+    const input = document.querySelector('#chat-message-input');
+    input.focus();
+    input.onkeyup = function(e) {
+        if (e.key === 'Enter') document.querySelector('#chat-message-submit').click();
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function() {
+        const message = input.value;
+        if (message.trim() === '') return;
+        chatSocket.send(JSON.stringify({ 'message': message }));
+        input.value = '';
+    };
+
+    document.querySelector('#chat-log').scrollTop = document.querySelector('#chat-log').scrollHeight;
+</script>
+{% endblock %}

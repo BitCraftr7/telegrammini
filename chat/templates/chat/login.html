@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Kirish</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center;
+        font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: radial-gradient(circle at top, #1c2b3a, #0e1621 70%);
+    }
+    .card {
+        background: #17212b;
+        border-radius: 16px;
+        padding: 36px 32px;
+        width: 340px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .logo-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+    .logo-wrap svg { width: 48px; height: 48px; }
+    h2 { text-align: center; color: #fff; margin: 0 0 24px; font-size: 22px; }
+    .field { margin-bottom: 16px; }
+    .field input {
+        width: 100%; padding: 13px 14px; border-radius: 10px; border: 1px solid #2b3947;
+        background: #0e1621; color: #fff; font-size: 14.5px; outline: none;
+    }
+    .field input:focus { border-color: #e8a33d; }
+    .field input::placeholder { color: #6c7883; }
+    .btn {
+        width: 100%; padding: 13px; border: none; border-radius: 10px;
+        background: linear-gradient(135deg, #f7d774, #e8a33d);
+        color: #1a1a1a; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 6px;
+    }
+    .btn:hover { opacity: 0.9; }
+    .error { color: #ff6b6b; font-size: 13.5px; text-align: center; margin-bottom: 14px; }
+    .bottom-link { text-align: center; margin-top: 18px; font-size: 14px; color: #6c7883; }
+    .bottom-link a { color: #7fbfff; text-decoration: none; }
+</style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo-wrap">
+            <svg viewBox="0 0 24 24">
+                <defs>
+                    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#f7d774"/>
+                        <stop offset="100%" stop-color="#e8a33d"/>
+                    </linearGradient>
+                </defs>
+                <path fill="url(#g)" d="M2 12.5l19-9-4 19-6-5-3 3-1-6-5-2z"/>
+            </svg>
+        </div>
+        <h2>Kirish</h2>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="field">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="field">
+                <input type="password" name="password" placeholder="Parol" required>
+            </div>
+            <button type="submit" class="btn">Kirish</button>
+        </form>
+
+        <div class="bottom-link">
+            Akkountingiz yo'qmi? <a href="{% url 'register' %}">Ro'yxatdan o'tish</a>
+        </div>
+    </div>
+</body>
+</html>
