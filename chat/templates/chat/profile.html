@@ -29,10 +29,12 @@
     .avatar-preview { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid #EAF3FF; display: block; }
     .avatar-wrap .cam-icon {
         position: absolute; bottom: 0; right: 0;
-        width: 30px; height: 30px; border-radius: 50%;
+        width: 28px; height: 28px; border-radius: 50%;
         background: linear-gradient(135deg, #2F80ED, #1C64D1);
         display: flex; align-items: center; justify-content: center;
         border: 3px solid #fff;
+        color: #fff; font-size: 18px; font-weight: 700; line-height: 1;
+        cursor: pointer;
     }
     .avatar-wrap .cam-icon svg { width: 14px; height: 14px; fill: #fff; }
     .avatar-wrap input[type="file"] { display: none; }
@@ -71,13 +73,11 @@
         <form method="post" enctype="multipart/form-data" id="profile-form">
             {% csrf_token %}
 
-            <label class="avatar-wrap" for="id_avatar">
-                <img class="avatar-preview" id="avatar-preview-img" src="{{ profile.avatar.url }}">
-                <span class="cam-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 3l-1.5 2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.5L15 3H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>
-                </span>
-                {{ form.avatar }}
-            </label>
+            <div class="avatar-wrap" id="avatar-wrap">
+                <img class="avatar-preview" id="avatar-preview-img" src="{{ profile.avatar.url }}" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed={{ request.user.username }}'">
+                <span class="cam-icon" id="cam-icon-btn">+</span>
+                <div style="display:none;">{{ form.avatar }}</div>
+            </div>
 
             <div class="username">{{ request.user.username }}</div>
 
@@ -96,6 +96,11 @@
         const avatarInput = document.querySelector('#id_avatar');
         const avatarPreview = document.querySelector('#avatar-preview-img');
         const profileForm = document.querySelector('#profile-form');
+        const camIconBtn = document.querySelector('#cam-icon-btn');
+
+        camIconBtn.addEventListener('click', function() {
+            avatarInput.click();
+        });
 
         avatarInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
