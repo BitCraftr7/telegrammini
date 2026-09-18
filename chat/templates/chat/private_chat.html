@@ -26,7 +26,8 @@
 <script>
     const currentUsername = "{{ request.user.username }}";
     const roomName = "{{ room_name }}";
-    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const chatSocket = new WebSocket(wsProtocol + window.location.host + '/ws/chat/' + roomName + '/');
 
 function appendMessage(username, message, avatarUrl, time) {
     const chatLog = document.querySelector('#chat-log');
