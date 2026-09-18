@@ -92,12 +92,30 @@ def private_chat(request, username):
     })
 
 
+# @login_required(login_url='login')
+# def profile_view(request):
+#     profile = request.user.profile
+#
+#     if request.method == 'POST':
+#         form = ProfileForm(request.POST, request.FILES, instance=profile)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('profile')
+#     else:
+#         form = ProfileForm(instance=profile)
+#
+#     return render(request, 'chat/profile.html', {'form': form, 'profile': profile})
+
 @login_required(login_url='login')
 def profile_view(request):
     profile = request.user.profile
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
+        print("FILES:", request.FILES)
+        print("Form valid:", form.is_valid())
+        if not form.is_valid():
+            print("Errors:", form.errors)
         if form.is_valid():
             form.save()
             return redirect('profile')
